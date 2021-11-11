@@ -1,0 +1,31 @@
+.gamenight {
+  display: flex;
+  flex-direction: column;
+}
+
+.gamenight .actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.gamenight .actions button:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.gamenight .status {
+  align-items: flex-start;
+}
+
+.gamenight .status .column:not(:last-child) {
+  margin-right: 20px;
+}
+
+.gamenight .status .card:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+@media (max-width: 600px) {
+  .gamenight .status .column:not(:last-child) {
+    margin-right: 0;
+  }
+}

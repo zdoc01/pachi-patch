@@ -1,0 +1,29 @@
+.button {
+  font-family: FuturaNo2D, Century Gothic, AppleGothic, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  border-radius: 2px;
+  border-color: transparent;
+  color: white;
+  cursor: pointer;
+  text-transform: uppercase;
+  opacity: 0.9;
+  min-width: 200px;
+  height: 30px;
+  line-height: 1.8;
+}
+
+.button:hover {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.button.btn-primary {
+  background-color: #f06414;
+}
+
+.button.btn-secondary {
+  background-color: #007dd1;
+}
