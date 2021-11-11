@@ -9,10 +9,19 @@ import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { setGamers } = useContext(GamersContext);
+  const { gamers, setGamers } = useContext(GamersContext);
 
-  const handleGamerSelectSubmit = (gamers: Gamer[]) => {
-    setGamers(gamers);
+  const handleGamerSelectSubmit = (gamersSelected: Gamer[]) => {
+    // update existing gamers with latest selections
+    setGamers(gamersSelected.map(g => {
+        const existingGamerState = gamers.find(({ name }) => name === g.name) || {} as Gamer;
+        return {
+            ...g,
+            // if gamer wasn't previously selected, set them to "playing"
+            // otherwise honor their current state
+            playing: !existingGamerState.selected ? true : g.playing
+        };
+    }));
     router.push('/gamenight');
   };
 
