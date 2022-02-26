@@ -24,6 +24,16 @@ const rotate = (playing: Gamer[], out: Gamer[]) => {
     return [nextPlaying, nextOut];
 };
 
+interface EmptySectionMessageProps {
+    sectionName: string;
+}
+
+const EmptySectionMessage = ({ sectionName }: EmptySectionMessageProps) => (
+    <div className={styles.emptySectionMessage}>
+        <p>No gamers are {sectionName} at the moment</p>
+    </div>
+);
+
 const GameNight: NextPage = () => {
     const { gamers, setGamers } = useContext(GamersContext);
     const [playing, setPlaying] = useState([] as Gamer[]);
@@ -88,25 +98,29 @@ const GameNight: NextPage = () => {
             <section className={`flex-grid ${styles.status}`}>
                 <div className={styles.column}>
                     <h2>In</h2>
-                    {playing.map(gamer => (
-                        <GamerCard
-                            classes={styles.card}
-                            key={gamer.name}
-                            gamer={gamer}
-                            onPlayPause={handlePlayPauseClick(gamer)}
-                        />
-                    ))}
+                    {playing.length > 0
+                        ? playing.map(gamer => (
+                            <GamerCard
+                                key={gamer.name}
+                                gamer={gamer}
+                                onPlayPause={handlePlayPauseClick(gamer)}
+                            />
+                        ))
+                        : <EmptySectionMessage sectionName="in"/>
+                    }
                 </div>
                 <div>
                     <h2>Out</h2>
-                    {out.map(gamer => (
-                        <GamerCard
-                            classes={styles.card}
-                            key={gamer.name}
-                            gamer={gamer}
-                            onPlayPause={handlePlayPauseClick(gamer)}
-                        />
-                    ))}
+                    {out.length > 0
+                        ? out.map(gamer => (
+                            <GamerCard
+                                key={gamer.name}
+                                gamer={gamer}
+                                onPlayPause={handlePlayPauseClick(gamer)}
+                            />
+                        ))
+                        : <EmptySectionMessage sectionName="out"/>
+                    }
                 </div>
             </section>
             {showAddGamerDialog && (

@@ -24,6 +24,10 @@
   margin-bottom: 5px;
 }
 
+.gamenight .emptySectionMessage {
+  width: 350px; /* widget of gamer card */
+}
+
 @media (max-width: 600px) {
   .gamenight .status .column:not(:last-child) {
     margin-right: 0;

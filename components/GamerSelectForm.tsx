@@ -41,11 +41,7 @@ const GamerSelectForm = ({ onSubmit }: GamerSelectFormProps) => {
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        if (gamersInForm.filter(g => g.selected).length > PLAYERS_PER_GAME) {
-            onSubmit(gamersInForm);
-        } else {
-            alert('You drunk? OW matches require 6 players, yo.');
-        }
+        onSubmit(gamersInForm);
     };
 
     return (
