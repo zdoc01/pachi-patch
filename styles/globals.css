@@ -1,3 +1,9 @@
+:root {
+  --color-primary: #007dd1;
+  --color-secondary: #f06414;
+  --min-header-height: 50px;
+}
+
 html,
 body {
   padding: 0;
@@ -29,4 +35,22 @@ a {
     width: 100%;
     flex-direction: column;
   }
+}
+
+.title a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.title a:hover,
+.title a:focus,
+.title a:active {
+  text-decoration: underline;
+}
+
+.title {
+  margin: 0;
+  line-height: 1.15;
+  font-size: 4rem;
+  margin-bottom: 50px;
 }

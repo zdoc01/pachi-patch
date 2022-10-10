@@ -1,38 +1,58 @@
-import { useContext, FormEvent } from 'react';
+import classnames from 'classnames';
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import GamersContext, { Gamer } from '../contexts/gamers';
-import GamerSelectForm from '../components/GamerSelectForm';
+import AuthorizedView from '../components/AuthorizedView';
+import Button from '../components/Button';
 
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { gamers, setGamers } = useContext(GamersContext);
 
-  const handleGamerSelectSubmit = (gamersSelected: Gamer[]) => {
-    // update existing gamers with latest selections
-    setGamers(gamersSelected.map(g => {
-        const existingGamerState = gamers.find(({ name }) => name === g.name) || {} as Gamer;
-        return {
-            ...g,
-            // if gamer wasn't previously selected, set them to "playing"
-            // otherwise honor their current state
-            playing: !existingGamerState.selected ? true : g.playing
-        };
-    }));
-    router.push('/gamenight');
+  const handlePlayClick = () => {
+    router.push('/gamenight/play');
   };
 
+  const handleLoginClick = () => {
+    router.push('/api/auth/signin');
+  };
+
+  const PlayNowButton = (
+    <Button
+      color="primary"
+      label="Play Now"
+      type="button"
+      onClick={handlePlayClick}
+    />
+  );
+
+  const LoginButton = (
+    <Button
+      color="primary"
+      label="Login"
+      type="button"
+      onClick={handleLoginClick}
+    />
+  );
+
   return (
-    <>
-        <h1 className={styles.title}>
-          {`Who's playing tonight?`}
-        </h1>
-        <GamerSelectForm onSubmit={handleGamerSelectSubmit} />
-    </>
-  )
+    <section className={styles.section}>
+      <h1 className={classnames(
+        styles.title,
+        'title',
+      )}>
+        The <i>Real</i> Pachi Patch
+      </h1>
+      <p className={styles.description}>
+        Welcome, Gamer.
+      </p>
+      <AuthorizedView fallback={LoginButton}>
+        {PlayNowButton}
+      </AuthorizedView>
+    </section>
+  );
 }
 
 export default Home

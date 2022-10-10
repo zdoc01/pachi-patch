@@ -21,9 +21,9 @@
 }
 
 .button.btn-primary {
-  background-color: #f06414;
+  background-color: var(--color-primary);
 }
 
 .button.btn-secondary {
-  background-color: #007dd1;
+  background-color: var(--color-secondary);
 }

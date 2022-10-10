@@ -25,7 +25,15 @@ const GamerCard = ({ classes = [], gamer: { avatarUrl, name, playing, selected }
 
     return (
         <div className={`${Array.isArray(classes) ? classes.join(' ') : classes} ${styles.card} ${selected ? styles.selected : ''}`} onClick={onClick}>
-            <Image className={styles.avatar} loader={customLoader} width={80} height={75} alt="Gamer avatar" src={avatarUrl} />
+            <Image
+              className={styles.avatar}
+              loader={customLoader}
+              width={80}
+              height={75}
+              alt="Gamer avatar"
+              src={avatarUrl}
+              unoptimized
+            />
             <h3 className={styles.name}>{name}</h3>
             <button className={styles.actions} onClick={handleActionClick}>
                 {playing ? <PauseIcon /> : <PlayIcon />}

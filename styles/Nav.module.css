@@ -1,0 +1,26 @@
+.nav {
+  margin: 0 -2rem;
+  padding: 0 2rem;
+  color: white;
+  background-color: var(--color-secondary);
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.nav ul li {
+  padding: 10px;
+  min-height: var(--min-header-height);
+  display: flex;
+  align-items: center;
+}
+
+.active {
+  background-color: var(--color-primary);
+}

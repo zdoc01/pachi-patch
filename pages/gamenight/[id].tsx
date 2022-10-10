@@ -1,15 +1,19 @@
 import { useContext, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 
-import Button from '../components/Button';
-import GamerCard from '../components/GamerCard';
-import GamerSelectForm from '../components/GamerSelectForm';
-import Modal from '../components/Modal';
+import AuthorizedView from '../../components/AuthorizedView';
+import Button from '../../components/Button';
+import GamerCard from '../../components/GamerCard';
+import GamerSelectForm from '../../components/GamerSelectForm';
+import Modal from '../../components/Modal';
 
-import GamersContext, { Gamer } from '../contexts/gamers';
-import { PLAYERS_PER_GAME } from '../constants';
+import GamersContext, { Gamer } from '../../contexts/gamers';
+import { PLAYERS_PER_GAME } from '../../constants';
 
-import styles from '../styles/GameNight.module.css';
+import useSessionRedirect from '../../hooks/use-session-redirect';
+
+import styles from '../../styles/GameNight.module.css';
 
 const rotate = (playing: Gamer[], out: Gamer[]) => {
     const outPaused = out.filter(g => !g.playing);
@@ -36,6 +40,8 @@ const EmptySectionMessage = ({ sectionName }: EmptySectionMessageProps) => (
 
 const GameNight: NextPage = () => {
     const { gamers, setGamers } = useContext(GamersContext);
+    const { data: session } = useSession();
+
     const [playing, setPlaying] = useState([] as Gamer[]);
     const [out, setOut] = useState([] as Gamer[]);
     const [showAddGamerDialog, setShowAddGamerDialog] = useState(!gamers.some(g => g.selected));
@@ -89,7 +95,10 @@ const GameNight: NextPage = () => {
         setOut([...pausedGamers, ...playingGamers.slice(PLAYERS_PER_GAME, selectedGamers.length)]);
     }, [gamers]);
 
+    useSessionRedirect();
+
     return (
+      <AuthorizedView>
         <div className={styles.gamenight}>
             <section className={styles.actions}>
                 <Button color="primary" label="Next Game" onClick={handleNextGameClick} />
@@ -129,6 +138,7 @@ const GameNight: NextPage = () => {
                 </Modal>
             )}
         </div>
+      </AuthorizedView>
     );
 };
 
