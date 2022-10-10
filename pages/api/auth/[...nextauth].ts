@@ -3,7 +3,17 @@ import { NextApiHandler } from 'next';
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import DiscordProvider from 'next-auth/providers/discord';
+import { Account, Profile } from 'next-auth/core/types';
 import prisma from '../../../lib/prisma';
+
+interface DiscordOAuthProfile extends Profile {
+  username: string;
+}
+
+interface SignInCallbackArgs {
+  account: Account;
+  profile: DiscordOAuthProfile;
+}
 
 const discordAuthUrl = "https://discord.com/api/oauth2/authorize?scope=identify+email+guilds.members.read";
 
@@ -16,7 +26,7 @@ const discordAuthUrl = "https://discord.com/api/oauth2/authorize?scope=identify+
  * 
  * @returns {boolean} Whether or not the user should be signed in
  */
-const signInCallback = async ({ account, profile }) => {
+const signInCallback = async ({ account, profile }: SignInCallbackArgs) => {
   console.info(`Handling signin for user [ ${profile?.username} ]`);
 
   let userPachiRoles: String[] | undefined;
@@ -52,6 +62,7 @@ const options = {
   }
 };
 
+// @ts-ignore
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
 
 export default authHandler;
