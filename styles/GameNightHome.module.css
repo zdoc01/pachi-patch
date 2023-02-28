@@ -1,0 +1,90 @@
+.container {
+  margin: 0 auto 10px auto;
+  max-width: 840px;
+}
+
+.start {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-radius: 4px;
+  align-items: center;
+  padding: 50px;
+}
+
+.start > p {
+  margin-bottom: 30px;
+}
+
+.inprogress {
+  border: 1px solid;
+  border-radius: 4px;
+  position: relative;
+}
+
+.inprogress:hover {
+  border-color: var(--color-primary);
+  transform: scale(1.01);
+}
+
+.inprogress:hover .billboard {
+  opacity: 0.9;
+}
+
+.inprogress .billboard {
+  position: relative;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity ease-in-out 0.15s;
+}
+
+.inprogress .content {
+  padding: 1.5rem;
+}
+
+.inprogress .content p {
+  margin: 5px 0;
+}
+
+.inprogress .content .title {
+  margin-top: 0;
+}
+
+.inprogress .link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 10;
+  display: block;
+}
+
+.history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history > li {
+  border: 1px solid;
+  border-radius: 4px;
+  display: flex;
+}
+
+.history > li:hover {
+  border-color: var(--color-primary);
+  transform: scale(1.01);
+}
+
+.history > li:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.history > li > a {
+  padding: 10px;
+  flex: 1;
+}

@@ -4,6 +4,20 @@
   --min-header-height: 50px;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 2s ease-in-out infinite;
+}
+
 html,
 body {
   padding: 0;
@@ -26,8 +40,6 @@ a {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  max-width: 800px;
-  margin-bottom: 40px;
 }
 
 @media (max-width: 600px) {

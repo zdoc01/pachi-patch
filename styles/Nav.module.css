@@ -1,6 +1,6 @@
 .nav {
   margin: 0 -2rem;
-  padding: 0 2rem;
+  padding: 1rem 2rem;
   color: white;
   background-color: var(--color-secondary);
   display: flex;
@@ -12,15 +12,35 @@
   margin: 0;
   padding: 0;
   display: flex;
-}
-
-.nav ul li {
-  padding: 10px;
-  min-height: var(--min-header-height);
-  display: flex;
   align-items: center;
 }
 
-.active {
-  background-color: var(--color-primary);
+.nav ul li {
+  min-height: var(--min-header-height);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.nav ul li a {
+  padding: 10px;
+}
+
+.active::after {
+  content: '';
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  border-top: 5px solid var(--color-primary);
+}
+
+.right li:not(:last-child) {
+  margin-right: 20px;
+}
+
+.branding {
+  cursor: pointer;
+  margin-right: 1rem;
 }

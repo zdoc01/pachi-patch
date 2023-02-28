@@ -6,14 +6,20 @@
   height: 75px;
   width: 350px;
   display: grid;
-  grid-template-columns: [avatar] 80px [name] auto [actions] 50px;
+  grid-template-columns: [avatar] 80px [name] auto;
   opacity: 0.6;
+}
+
+.card.with-actions {
+  grid-template-columns: [avatar] 80px [name] auto [actionOne] 40px [actionTwo] 40px;
+  cursor: inherit;
 }
 
 .card:hover,
 .card:focus,
 .card:active {
   opacity: 1;
+  filter: drop-shadow(2px 4px 6px black);
 }
 
 .card h2 {
@@ -35,6 +41,12 @@
 .card .avatar {
   height: 75px;
   width: 100%;
+  overflow: hidden;
+}
+
+.card .avatar img {
+  /* Scale up the image for better cropping so it fills the allotted space */
+  transform: scale(1.1);
 }
 
 .card .name {
@@ -45,12 +57,19 @@
   display: flex;
   align-items: center;
   padding-left: 20px;
-  border: 1px solid white;
+  border-left: 2px solid white;
 }
 
-.card .actions {
-  border: 1px solid white;
+.card .action {
+  border-left: 2px solid white;
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
   background-color: #007dd1;
   color: white;
   cursor: pointer;
+}
+
+.card .action.secondary {
+  background-color: var(--color-secondary);
 }

@@ -1,0 +1,8 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    // Required for deserialization of PostgreSQL Date types with Prisma
+    // See https://github.com/prisma/prisma/discussions/4428#discussioncomment-147158
+    "superjson-next"
+  ]
+}

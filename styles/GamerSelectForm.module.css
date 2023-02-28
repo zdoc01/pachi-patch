@@ -7,3 +7,19 @@
 .gamer-select-form .gamer-card {
   margin: 0 20px 10px 20px;
 }
+
+.selectable-gamer-card input {
+  position: absolute;
+  top: -9999%;
+}
+
+.selectable-gamer-card input:checked ~ .gamer-card {
+  opacity: 1;
+  color: white;
+}
+
+.selectable-gamer-card input:not(:checked) ~ .gamer-card:hover,
+.selectable-gamer-card input:not(:checked) ~ .gamer-card:active,
+.selectable-gamer-card input:not(:checked) ~ .gamer-card:focus {
+  opacity: 0.6;
+}

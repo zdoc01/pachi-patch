@@ -1,6 +1,6 @@
 .gamenight {
-  display: flex;
-  flex-direction: column;
+  max-width: 840px;
+  margin: 0 auto;
 }
 
 .gamenight .actions {
@@ -14,10 +14,11 @@
 
 .gamenight .status {
   align-items: flex-start;
+  column-gap: 20px;
 }
 
-.gamenight .status .column:not(:last-child) {
-  margin-right: 20px;
+.gamenight .status .card {
+  opacity: 1;
 }
 
 .gamenight .status .card:not(:last-child) {
@@ -25,10 +26,13 @@
 }
 
 .gamenight .emptySectionMessage {
-  width: 350px; /* widget of gamer card */
+  width: 350px; /* width of gamer card */
 }
 
 @media (max-width: 600px) {
+  .gamenight {
+    margin: 0;
+  }
   .gamenight .status .column:not(:last-child) {
     margin-right: 0;
   }

@@ -15,6 +15,14 @@
   line-height: 1.8;
 }
 
+button.button:disabled {
+  color: black;
+  background-color: rgba(0,0,0,.5);
+  transform: none;
+  opacity: 1;
+  pointer-events: none;
+}
+
 .button:hover {
   opacity: 1;
   transform: scale(1.02);

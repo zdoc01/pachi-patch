@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NextApiHandler } from 'next';
 import NextAuth from 'next-auth';
+import { Session, DefaultUser } from 'next-auth/core/types';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import DiscordProvider from 'next-auth/providers/discord';
 import { Account, Profile } from 'next-auth/core/types';
@@ -58,6 +59,10 @@ const options = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
   callbacks: {
+    session: async (session: Session, user: DefaultUser) => {
+      session.id = user?.id;
+      return Promise.resolve(session);
+    },
     signIn: signInCallback
   }
 };

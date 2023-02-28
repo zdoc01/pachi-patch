@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -40,13 +41,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                  String              @id @default(cuid())
+  name                String?
+  email               String?             @unique
+  emailVerified       DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  gameSessions        GameSession[]
+  gameStats           GameSessionStats[]
+  gameNightsCreated   GameNight[]         @relation("UserGameNightsCreated")
 }
 
 model VerificationToken {
@@ -56,4 +60,72 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model GameNight {
+  id                Int                 @id @default(autoincrement())
+  archived          Boolean             @default(false)
+  createdAt         DateTime            @default(now()) @map(name: "created_at")
+  createdBy         User                @relation("UserGameNightsCreated", fields: [createdById], references: [id])
+  createdById       String
+  games             Game[]
+  gameSessions      GameSession[]
+  gameSessionStats  GameSessionStats[]
+  gameNightStats    GameNightStats?
+  updatedAt         DateTime            @updatedAt @map(name: "updated_at")
+}
+
+model Game {
+  id                Int       @id @default(autoincrement())
+  name              String
+  gameNights        GameNight[]
+  gameNightStats    GameNightStats[]
+  gameSessions      GameSession[]
+  gameSessionStats  GameSessionStats[]
+}
+
+model GameSession {
+  id                  String            @id @default(cuid())
+  userId              String
+  gameNightId         Int
+  gameId              Int
+  gameSessionStatsId  String?           @unique
+  isLocked            Boolean?
+  isPlaying           Boolean           @default(false)
+  gameNight           GameNight         @relation(fields: [gameNightId], references: [id], onDelete: Cascade)
+  game                Game              @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameSessionStats    GameSessionStats? @relation(fields: [gameSessionStatsId], references: [id], onDelete: SetNull)
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt           DateTime          @updatedAt @default(now()) @map(name: "updated_at")
+
+  @@unique([userId, gameNightId])
+}
+
+model GameSessionStats {
+  id            String        @id @default(cuid())
+  gameId        Int
+  gameNightId   Int
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game          Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameNight     GameNight     @relation(fields: [gameNightId], references: [id], onDelete: Cascade)
+  gameSession   GameSession?
+  wins          Int           @default(0)
+  losses        Int           @default(0)
+  score         Int?
+
+  @@unique([gameId, gameNightId, userId])
+}
+
+model GameNightStats {
+  id            String        @id @default(cuid())
+  gameId        Int
+  gameNightId   Int           @unique
+  game          Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameNight     GameNight     @relation(fields: [gameNightId], references: [id], onDelete: Cascade)
+  wins          Int
+  losses        Int
+  score         Int?
+
+  @@unique([gameId, gameNightId])
 }

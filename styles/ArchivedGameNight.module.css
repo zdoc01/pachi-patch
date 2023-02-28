@@ -1,0 +1,14 @@
+.ArchivedGameNight {
+  max-width: 840px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ArchivedGameNight a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.ArchivedGameNight a:visited {
+  color: var(--color-secondary);
+}
