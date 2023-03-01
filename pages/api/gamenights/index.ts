@@ -60,7 +60,24 @@ const convertToGameSessionQueries = (
 const handler: NextApiHandler = async (req: GameNightRequest, res) => {
   console.log(`[ ${req.method} ] /gamenights`);
 
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
+    try {
+      const gameNights = await prisma.gameNight.findMany({
+        include: {
+          createdBy: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      res.status(200).json({ gameNights });
+    } catch (error) {
+      console.log('Error fetching game nights', error);
+      // @ts-ignore
+      res.status(500).send({ error: error?.message });
+    }
+  } else if (req.method === 'POST') {
     try {
       const session = await getSession({ req });
 
@@ -73,6 +90,9 @@ const handler: NextApiHandler = async (req: GameNightRequest, res) => {
       }
 
       const newGameNight = await prisma.gameNight.create({
+        include: {
+          createdBy: true,
+        },
         data: {
           games: {
             connect: [{ id: 1 }],
@@ -91,7 +111,7 @@ const handler: NextApiHandler = async (req: GameNightRequest, res) => {
 
       console.log(`Successfully created game sessions`);
 
-      return res.status(201).json({ id: newGameNight.id });
+      return res.status(201).json(newGameNight);
     } catch (error) {
       console.log('Error creating new game night', error);
       // @ts-ignore

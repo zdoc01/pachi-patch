@@ -1,3 +1,4 @@
+import { GameNight as PrismaGameNight } from '@prisma/client';
 import { User } from './User';
 
 export interface Game {
@@ -17,13 +18,8 @@ export interface GameSession {
   updatedAt: Date;
 }
 
-export interface GameNight {
-  id: number;
-  archived: boolean;
-  createdById: string;
+export interface GameNight extends PrismaGameNight {
   createdBy: User;
   games: Game[];
   gameSessions: GameSession[];
-  createdAt: Date;
-  updatedAt: string;
 }

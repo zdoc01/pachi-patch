@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import type { GetStaticProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import prisma from '../../lib/prisma';
 
 import { GameNight } from '../../types/GameNight';
 import { User } from '../../types/User';
@@ -13,9 +12,10 @@ import Button from '../../components/Button';
 import GamerSelectForm from '../../components/GamerSelectForm';
 import { Modal } from '../../components/Modal';
 
-import { IconCog } from '../../src/icons/IconCog';
-
 import useSessionRedirect from '../../hooks/use-session-redirect';
+import { useGameNights } from '../../hooks/use-game-nights';
+
+import { IconCog } from '../../src/icons/IconCog';
 import { getFormattedDate, timeSince } from '../../src/utils/dates';
 
 import styles from '../../styles/GameNightHome.module.css';
@@ -24,10 +24,6 @@ const OVERWATCH_BILLBOARD_IMG_SRC =
   'https://images.blz-contentstack.com/v3/assets/blt2477dcaf4ebd440c/bltdad361c29b29b03a/5cef227acf7aa6330ac66561/eichenwalde-screenshot-003.jpg?auto=webp';
 const OVERWATCH_2_MASTHEAD_IMG_SRC =
   'https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltbcf2689c29fa39eb/622906a991f4232f0085d3cc/Masthead_Overwatch2_Logo.png?format=webply&quality=90';
-
-interface GameNightHomePageProps {
-  gameNights: GameNight[];
-}
 
 const normalizeHistoricalGameNights = (gameNights: GameNight[]) => {
   const toUpdate: Promise<any>[] = [];
@@ -76,7 +72,7 @@ const InProgress = ({ gameNight }: { gameNight: GameNight }) => {
       </section>
       <section className={styles.content}>
         <h4 className={styles.title}>{`Game Night #${gameNight.id}`}</h4>
-        <p>{`Started ${timeSince(gameNight.createdAt)} ago`}</p>
+        <p>{`Started ${timeSince(new Date(gameNight.createdAt))} ago`}</p>
         <p>{`Created by ${gameNight.createdBy.name}`}</p>
       </section>
       <Link href={`/gamenight/${gameNight.id}`} passHref>
@@ -118,7 +114,9 @@ const History = ({ gameNights }: { gameNights: GameNight[] }) => {
       {gameNights.map((gn) => (
         <li key={gn.id}>
           <Link href={`/gamenight/${gn.id}`}>
-            {`Game Night #${gn.id} (${getFormattedDate(gn.createdAt)})`}
+            {`Game Night #${gn.id} (${getFormattedDate(
+              new Date(gn.createdAt)
+            )})`}
           </Link>
         </li>
       ))}
@@ -126,10 +124,15 @@ const History = ({ gameNights }: { gameNights: GameNight[] }) => {
   );
 };
 
-const GameNightHome: NextPage<GameNightHomePageProps> = ({
-  gameNights = [],
-}) => {
-  const [creatingGameNight, setCreatingGameNight] = useState(false);
+const GameNightHome: NextPage = () => {
+  const {
+    createGameNight,
+    error,
+    gameNights,
+    isLoading,
+    isMutating: creatingGameNight,
+  } = useGameNights();
+
   const [isSelectingUsers, setIsSelectingUsers] = useState(false);
   const [gameNightsInProgress, setGameNightsInProgress] = useState(
     [] as GameNight[]
@@ -142,51 +145,32 @@ const GameNightHome: NextPage<GameNightHomePageProps> = ({
     setIsSelectingUsers(false);
 
     if (selectedUserIds.length) {
-      setCreatingGameNight(true);
-
-      const newGameNight = await fetch('/api/gamenights', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          users: selectedUserIds,
-        }),
-      })
-        .then((res) => res.json())
-        .catch((error) => {
-          console.error('Unable to create a new game night instance', error);
-          alert(
-            'Oops. An error occurred. Try again, or let Zach know if the issue persists.'
-          );
-        })
-        .finally(() => {
-          setCreatingGameNight(false);
-        });
-
-      if (newGameNight?.id) {
-        router.push(`/gamenight/${newGameNight.id}`);
-      }
+      createGameNight({ users: selectedUserIds });
     }
   };
 
   useSessionRedirect();
 
   useEffect(() => {
-    const oneDayAgo = +new Date() - 24 * 60 * 60 * 1000;
-    // Anything started within the last day is considered "In Progress"
-    const inProgress = gameNights.filter(
-      (gn) => gn.createdAt.getTime() > oneDayAgo || !gn.archived
-    );
-    const historical = gameNights.filter(
-      (gn) => !inProgress.some(({ id }) => id === gn.id)
-    );
+    if (gameNights?.length) {
+      const oneDayAgo = +new Date() - 24 * 60 * 60 * 1000;
+      // Anything started within the last day is considered "In Progress"
+      const inProgress = gameNights.filter(
+        (gn) => new Date(gn.createdAt).getTime() > oneDayAgo && !gn.archived
+      );
+      const historical = gameNights.filter(
+        (gn) => !inProgress.some(({ id }) => id === gn.id)
+      );
 
-    normalizeHistoricalGameNights(historical);
+      normalizeHistoricalGameNights(historical);
 
-    setGameNightsInProgress(inProgress);
-    setPastGameNights(historical);
+      setGameNightsInProgress(inProgress);
+      setPastGameNights(historical);
+    }
   }, [gameNights]);
+
+  if (error) return <div>An error occurred</div>;
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <AuthorizedView>
@@ -224,17 +208,3 @@ const GameNightHome: NextPage<GameNightHomePageProps> = ({
 };
 
 export default GameNightHome;
-
-export const getStaticProps: GetStaticProps = async () => {
-  const gameNights = await prisma.gameNight.findMany({
-    include: {
-      createdBy: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-  return {
-    props: { gameNights },
-  };
-};

@@ -30,7 +30,6 @@ const useGameSessions = (
     error,
     isLoading,
     isValidating,
-    mutate,
   }: SWRResponse<GameSessionsResponse, any> = useSwr(
     // @see https://swr.vercel.app/docs/conditional-fetching
     gameNightId ? `/api/game-sessions?gameNightId=${gameNightId}` : null,
@@ -48,7 +47,6 @@ const useGameSessions = (
     isLoading,
     isMutating,
     isValidating,
-    mutateGameSessions: mutate,
     mutateGameSessionsBatch: trigger,
   };
 };

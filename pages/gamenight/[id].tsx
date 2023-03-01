@@ -218,6 +218,7 @@ const GameNight: NextPage = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        ...gameSession,
         isLocked: !gameSession.isLocked,
       }),
     });
@@ -252,6 +253,7 @@ const GameNight: NextPage = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        ...gameSession,
         isPlaying: !gameSession.isPlaying,
       }),
     });
