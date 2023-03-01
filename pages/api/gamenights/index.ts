@@ -71,11 +71,11 @@ const handler: NextApiHandler = async (req: GameNightRequest, res) => {
         },
       });
 
-      res.status(200).json({ gameNights });
+      return res.status(200).json({ gameNights });
     } catch (error) {
       console.log('Error fetching game nights', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   } else if (req.method === 'POST') {
     try {
@@ -115,11 +115,11 @@ const handler: NextApiHandler = async (req: GameNightRequest, res) => {
     } catch (error) {
       console.log('Error creating new game night', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   }
 
-  res.status(404).send({ error: 'Route not found.' });
+  return res.status(404).send({ error: 'Route not found.' });
 };
 
 export default handler;

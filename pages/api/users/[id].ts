@@ -22,11 +22,11 @@ const handler: NextApiHandler = async (req: SingleGameNightRequest, res) => {
     } catch (error) {
       console.log('Error fetching user', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   }
 
-  res.status(404).send({ error: 'Route not found.' });
+  return res.status(404).send({ error: 'Route not found.' });
 };
 
 export default handler;

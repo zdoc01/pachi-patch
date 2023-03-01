@@ -31,7 +31,7 @@ const handler: NextApiHandler = async (req: GameSessionRequest, res) => {
     } catch (error) {
       console.log('Error creating game sessions', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   } else if (req.method === 'PUT') {
     try {
@@ -40,7 +40,7 @@ const handler: NextApiHandler = async (req: GameSessionRequest, res) => {
     } catch (error) {
       console.log('Error updating game sessions', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   } else if (req.method === 'DELETE') {
     try {
@@ -56,11 +56,11 @@ const handler: NextApiHandler = async (req: GameSessionRequest, res) => {
     } catch (error) {
       console.log('Error deleting game sessions', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   }
 
-  res.status(500).send({ error: 'Route not found.' });
+  return res.status(500).send({ error: 'Route not found.' });
 };
 
 export default handler;

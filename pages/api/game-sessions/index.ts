@@ -44,16 +44,16 @@ const handler: NextApiHandler = async (req: GameSessionRequest, res) => {
           },
         });
 
-        res.status(200).send({ gameSessions });
+        return res.status(200).send({ gameSessions });
       } catch (error) {
         console.error('Unable to fetch GameSessions', error);
         // @ts-ignore
-        res.status(500).send({ error: error?.message });
+        return res.status(500).send({ error: error?.message });
       }
     }
   }
 
-  res.status(500).send({ error: 'Route not found.' });
+  return res.status(500).send({ error: 'Route not found.' });
 };
 
 export default handler;

@@ -33,11 +33,11 @@ const handler: NextApiHandler = async (req: GameSessionRequest, res) => {
     } catch (error) {
       console.log('Error updating game session', error);
       // @ts-ignore
-      res.status(500).send({ error: error?.message });
+      return res.status(500).send({ error: error?.message });
     }
   }
 
-  res.status(500).send({ error: 'Route not found.' });
+  return res.status(500).send({ error: 'Route not found.' });
 };
 
 export default handler;
