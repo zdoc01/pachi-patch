@@ -1,5 +1,6 @@
 import { GameSession, PrismaClient } from '@prisma/client';
 import { getGameSessionStatsQueryData } from './game-session-stats';
+import prisma from '../../../lib/prisma';
 
 const getGameSessionUpdateQuery = (gs: GameSession) => ({
   gameId: gs.gameId,

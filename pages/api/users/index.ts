@@ -1,5 +1,4 @@
 import { NextApiHandler } from 'next';
-import { getSession } from 'next-auth/react';
 import prisma from '../../../lib/prisma';
 
 const handler: NextApiHandler = async (req, res) => {
@@ -7,8 +6,6 @@ const handler: NextApiHandler = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      // const session = await getSession({ req });
-
       const users = await prisma.user.findMany();
 
       console.log(`Found ${users?.length} users`);
