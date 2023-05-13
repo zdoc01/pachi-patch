@@ -2,9 +2,10 @@ import { MouseEvent } from 'react';
 import Image from 'next/image';
 import classnames from 'classnames';
 
-import { RightArrowIcon } from './RightArrowIcon';
 import { LeftArrowIcon } from './LeftArrowIcon';
 import { LockedIcon } from './LockedIcon';
+import { RightArrowIcon } from './RightArrowIcon';
+import { SwapIcon } from './SwapIcon';
 import { UnlockedIcon } from './UnlockedIcon';
 
 import { User } from '../types/User';
@@ -17,6 +18,7 @@ interface GamerCardProps {
   onClick?: (event: any) => void;
   onMove?: () => void;
   onPlayPause?: () => void;
+  onSwap?: () => void;
   locked?: boolean;
   playing?: boolean;
   selected?: boolean;
@@ -32,6 +34,7 @@ const GamerCard = ({
   onClick,
   onMove,
   onPlayPause,
+  onSwap,
   locked = false,
   playing = false,
   selected = false,
@@ -45,6 +48,11 @@ const GamerCard = ({
   const handleMoveGamerClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onMove && onMove();
+  };
+
+  const handleSwapGamerClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onSwap && onSwap();
   };
 
   return (
@@ -68,7 +76,7 @@ const GamerCard = ({
       </div>
       <h3 className={styles.name}>{name}</h3>
       {showActions && (
-        <>
+        <div className={styles.actions}>
           <button
             title={`Move ${playing ? 'out' : 'in'}`}
             className={styles.action}
@@ -76,6 +84,15 @@ const GamerCard = ({
           >
             {playing ? <RightArrowIcon /> : <LeftArrowIcon />}
           </button>
+          {onSwap && (
+            <button
+              title={`Swap with gamer ${playing ? 'out' : 'in'}`}
+              className={styles.action}
+              onClick={handleSwapGamerClick}
+            >
+              <SwapIcon />
+            </button>
+          )}
           <button
             title={locked ? 'Unlock' : 'Lock'}
             className={classnames(styles.action, {
@@ -85,7 +102,7 @@ const GamerCard = ({
           >
             {locked ? <LockedIcon /> : <UnlockedIcon />}
           </button>
-        </>
+        </div>
       )}
     </div>
   );

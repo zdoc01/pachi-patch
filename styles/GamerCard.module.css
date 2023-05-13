@@ -4,14 +4,13 @@
   transition: color 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
   height: 75px;
-  width: 350px;
+  width: 100%;
   display: grid;
-  grid-template-columns: [avatar] 80px [name] auto;
+  grid-template-columns: [avatar] 80px [name] 1fr [actions] auto;
   opacity: 0.6;
 }
 
 .card.with-actions {
-  grid-template-columns: [avatar] 80px [name] auto [actionOne] 40px [actionTwo] 40px;
   cursor: inherit;
 }
 
@@ -58,6 +57,10 @@
   align-items: center;
   padding-left: 20px;
   border-left: 2px solid white;
+}
+
+.card .actions {
+  display: flex;
 }
 
 .card .action {

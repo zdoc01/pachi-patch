@@ -17,16 +17,16 @@
   column-gap: 20px;
 }
 
+.gamenight .column {
+  flex: 1 auto;
+}
+
 .gamenight .status .card {
   opacity: 1;
 }
 
 .gamenight .status .card:not(:last-child) {
   margin-bottom: 5px;
-}
-
-.gamenight .emptySectionMessage {
-  width: 350px; /* width of gamer card */
 }
 
 @media (max-width: 600px) {

@@ -1,11 +1,24 @@
 .gamer-select-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
-.gamer-select-form .gamer-card {
-  margin: 0 20px 10px 20px;
+.gamer-select-form .actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.gamer-select-form .gamers {
+  gap: 2%;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.selectable-gamer-card {
+  width: 49%; /* account for the gap between cards */
+  margin-bottom: 10px;
 }
 
 .selectable-gamer-card input {

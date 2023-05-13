@@ -5,22 +5,40 @@ interface UsersResponse {
   users: User[];
 }
 
-const useUsers = (opts?: Record<string, any>) => {
+interface Options {
+  defaultUsers?: User[];
+  skipFetch?: boolean;
+  [key: string]: any;
+}
+
+const useUsers = (opts?: Options) => {
+  const defaultOptions = {
+    defaultUsers: [],
+    skipFetch: false,
+    ...(opts || {}),
+  };
+
+  const { defaultUsers, skipFetch, ...swrOpts } = defaultOptions;
+
   const {
     data,
     error,
     isLoading,
     isValidating,
-  }: SWRResponse<UsersResponse, any> = useSwr(`/api/users`, {
+  }: SWRResponse<UsersResponse, any> = useSwr(skipFetch ? null : `/api/users`, {
     refreshInterval: 60000,
-    ...opts,
+    ...swrOpts,
   });
-  const users = data?.users || [];
+
+  const users = data?.users || defaultUsers || [];
+
+  const getUserById = (id: string) => users.find((u) => u.id === id);
 
   if (error) console.error('Unable to retrieve user list', error);
 
   return {
     error,
+    getUserById,
     users,
     isLoading,
     isValidating,

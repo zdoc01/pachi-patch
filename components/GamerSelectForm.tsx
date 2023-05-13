@@ -16,15 +16,25 @@ import styles from '../styles/GamerSelectForm.module.css';
 interface GamerSelectFormProps {
   gameNightId?: GameNight['id'];
   onSubmit: (selectedUserIds: User['id'][]) => void;
+  selectionType?: 'single' | 'multi';
+  users?: User[];
 }
 
 interface SelectableUser extends User {
   isSelected?: boolean;
 }
 
-const GamerSelectForm = ({ gameNightId, onSubmit }: GamerSelectFormProps) => {
+const GamerSelectForm = ({
+  gameNightId,
+  onSubmit,
+  selectionType = 'multi',
+  users = [],
+}: GamerSelectFormProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const { users, isLoading: isLoadingUsers } = useUsers();
+  const { users: usersToDisplay, isLoading: isLoadingUsers } = useUsers({
+    defaultUsers: users,
+    skipFetch: !!users?.length,
+  });
   const [allUsers, setAllUsers] = useState([] as SelectableUser[]);
   const { gameSessions, isLoading: isLoadingGameSessions } =
     useGameSessions(gameNightId);
@@ -38,7 +48,7 @@ const GamerSelectForm = ({ gameNightId, onSubmit }: GamerSelectFormProps) => {
 
   const handleCheckboxChange = (user: SelectableUser) => () => {
     // Must update in this way (full reset of `allUsers`) to force full checkbox
-    // re-render, otherwise checkbox state doesn't proper reflect user selected
+    // re-render, otherwise checkbox state doesn't reflect user selected
     // state.
     const updatedUsers = allUsers.map((u) => {
       if (u.id !== user.id) {
@@ -55,12 +65,12 @@ const GamerSelectForm = ({ gameNightId, onSubmit }: GamerSelectFormProps) => {
 
   useEffect(() => {
     setAllUsers(
-      users.map((user) => ({
+      usersToDisplay.map((user) => ({
         ...user,
         isSelected: gameSessions?.some((gs) => gs.userId === user.id) || false,
       }))
     );
-  }, [gameSessions, users]);
+  }, [gameSessions, usersToDisplay]);
 
   /**
    * Only show loading state for initial data load (i.e. isLoading = true).
@@ -73,14 +83,16 @@ const GamerSelectForm = ({ gameNightId, onSubmit }: GamerSelectFormProps) => {
     </div>
   ) : (
     <form className={styles['gamer-select-form']} onSubmit={handleSubmit}>
-      <div className="flex-grid">
+      <div className={`flex-grid ${styles.gamers}`}>
         {allUsers.map((user, idx) => {
           return (
             <label className={styles['selectable-gamer-card']} key={user.id}>
               <input
                 checked={user.isSelected}
-                name={`gamer-checkbox-${idx}`}
-                type="checkbox"
+                name={
+                  selectionType === 'single' ? 'gamer' : `gamer-checkbox-${idx}`
+                }
+                type={selectionType === 'single' ? 'radio' : 'checkbox'}
                 value={user.id}
                 onChange={handleCheckboxChange(user)}
               />
@@ -89,15 +101,20 @@ const GamerSelectForm = ({ gameNightId, onSubmit }: GamerSelectFormProps) => {
           );
         })}
       </div>
-
-      <Button
-        disabled={isLoadingGameSessions}
-        classes={[styles['start-btn']]}
-        color="primary"
-        label={'Leggo'}
-        loading={isLoadingGameSessions}
-        type="submit"
-      />
+      <div className={styles.actions}>
+        <Button
+          color="secondary"
+          label={'Cancel'}
+          onClick={(event) => onSubmit([])}
+        />
+        <Button
+          disabled={isLoadingGameSessions}
+          color="primary"
+          label={'Leggo'}
+          loading={isLoadingGameSessions}
+          type="submit"
+        />
+      </div>
     </form>
   );
 };

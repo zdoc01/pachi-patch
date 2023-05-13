@@ -94,7 +94,7 @@ const EmptySectionMessage = ({ sectionName }: EmptySectionMessageProps) => (
 
 const GameNight: NextPage = () => {
   const router = useRouter();
-  const { users } = useUsers();
+  const { getUserById, users } = useUsers();
   const { mutateGameSessionsBatch, isMutating } = useGameSessions();
   const { gameNight, error, isLoading, mutateGameNight } = useGameNight(
     router?.query?.id,
@@ -106,7 +106,11 @@ const GameNight: NextPage = () => {
   const [playing, setPlaying] = useState([] as GameSession[]);
   const [out, setOut] = useState([] as GameSession[]);
   const [showAddGamerDialog, setShowAddGamerDialog] = useState(false);
+  const [showSwapGamersDialog, setShowSwapGamersDialog] = useState(false);
   const [adjustingRoster, setAdjustingRoster] = useState(false);
+  const [sessionToSwapOut, setSessionToSwapOut] = useState<GameSession | null>(
+    null
+  );
 
   const handleNextGameClick = async () => {
     const [nextIn, nextOut] = rotate(playing, out);
@@ -145,8 +149,57 @@ const GameNight: NextPage = () => {
     setShowAddGamerDialog(true);
   };
 
+  const handleSwapGamersClick = (sessionToSwap: GameSession) => () => {
+    setShowSwapGamersDialog(true);
+    setAdjustingRoster(true);
+    setSessionToSwapOut(sessionToSwap);
+  };
+
+  const handleGamerSwapSubmit = (selectedUserIds: User['id'][]) => {
+    setShowSwapGamersDialog(false);
+
+    if (gameNight && sessionToSwapOut && selectedUserIds.length) {
+      const sessionToMoveIn = gameNight.gameSessions.find(
+        (session) => session.userId === selectedUserIds[0]
+      );
+
+      if (sessionToMoveIn) {
+        const sessionsToUpdate = [
+          {
+            ...sessionToMoveIn,
+            isPlaying: true,
+            updatedAt: new Date(),
+          },
+          {
+            ...sessionToSwapOut,
+            isPlaying: false,
+            updatedAt: new Date(),
+          },
+        ];
+
+        mutateGameSessionsBatch({
+          gameSessions: sessionsToUpdate,
+          method: 'PUT',
+        });
+
+        mutateGameNight(
+          {
+            ...gameNight,
+            gameSessions: gameNight.gameSessions.map((session) => {
+              const updatedSession = sessionsToUpdate.find(
+                (gs) => gs.userId === session.userId
+              );
+
+              return updatedSession || session;
+            }),
+          },
+          { revalidate: false }
+        );
+      }
+    }
+  };
+
   const handleGamerSelectSubmit = (selectedUserIds: User['id'][]) => {
-    console.log('Selected users', selectedUserIds);
     setShowAddGamerDialog(false);
 
     if (gameNight && selectedUserIds.length) {
@@ -195,6 +248,7 @@ const GameNight: NextPage = () => {
             isPlaying: false,
             isLocked: false,
             updatedAt: new Date(),
+            user: getUserById(userId),
           } as GameSession)
         );
       });
@@ -440,6 +494,7 @@ const GameNight: NextPage = () => {
                       showActions={true}
                       onPlayPause={handlePlayPauseClick(session)}
                       onMove={handleMoveClick(session)}
+                      onSwap={handleSwapGamersClick(session)}
                     />
                   );
                 })
@@ -447,7 +502,7 @@ const GameNight: NextPage = () => {
                 <EmptySectionMessage sectionName="in" />
               )}
             </div>
-            <div>
+            <div className={styles.column}>
               <h2>Out</h2>
               {out.length > 0 ? (
                 out.map((session) => {
@@ -481,6 +536,18 @@ const GameNight: NextPage = () => {
               />
             </Modal>
           )}
+          {showSwapGamersDialog && sessionToSwapOut ? (
+            <Modal
+              onClose={() => setShowSwapGamersDialog(false)}
+              title={`Who are we swapping for ${sessionToSwapOut.user.name}?`}
+            >
+              <GamerSelectForm
+                selectionType="single"
+                users={out.map(({ user }) => user)}
+                onSubmit={handleGamerSwapSubmit}
+              />
+            </Modal>
+          ) : null}
         </div>
       )}
     </AuthorizedView>

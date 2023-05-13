@@ -1,3 +1,7 @@
+/**
+ * https://www.svgrepo.com/svg/5201/right-arrow
+ * @returns {JSX} Right arrow
+ */
 const RightArrowIcon = () => {
   return (
     <svg
