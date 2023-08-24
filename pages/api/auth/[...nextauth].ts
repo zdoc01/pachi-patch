@@ -16,35 +16,48 @@ interface SignInCallbackArgs {
   profile: DiscordOAuthProfile;
 }
 
-const discordAuthUrl = "https://discord.com/api/oauth2/authorize?scope=identify+email+guilds.members.read";
+const discordAuthUrl =
+  'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds.members.read';
 
 /**
  * Check the user that's attempting to login against the Pachi Patch Discourse
  * server. Only permit those that are a member of said server and have the
  * "Pachi Patch" role.
- * 
+ *
  * @docs https://next-auth.js.org/configuration/callbacks#sign-in-callback
- * 
+ *
  * @returns {boolean} Whether or not the user should be signed in
  */
 const signInCallback = async ({ account, profile }: SignInCallbackArgs) => {
   console.info(`Handling signin for user [ ${profile?.username} ]`);
 
-  let userPachiRoles: String[] | undefined;
+  const authorizedRoles =
+    process.env.PACHI_PATCH_AUTHORIZED_ROLE_IDS?.split(',');
+
+  let userPachiRoles: string[] | undefined;
 
   try {
     // @docs https://discord.com/developers/docs/resources/user#get-current-user-guild-member
-    const { data } = await axios.get(`https://discord.com/api/users/@me/guilds/${process.env.PACHI_SERVER_ID}/member`, {
-      headers: {
-        Authorization: `Bearer ${account?.access_token}`
+    const { data } = await axios.get(
+      `https://discord.com/api/users/@me/guilds/${process.env.PACHI_SERVER_ID}/member`,
+      {
+        headers: {
+          Authorization: `Bearer ${account?.access_token}`,
+        },
       }
-    });
+    );
     userPachiRoles = data?.roles;
   } catch (error) {
-    console.error(`Error fetching Pachi roles for user [ ${profile?.username} ]`, error);
+    console.error(
+      `Error fetching Pachi roles for user [ ${profile?.username} ]`,
+      error
+    );
   }
 
-  return userPachiRoles?.some(roleId => roleId === process.env.PACHI_PATCH_AUTHORIZED_ROLE_ID) || '/unauthorized';
+  return (
+    userPachiRoles?.some((roleId) => authorizedRoles?.includes(roleId)) ||
+    '/unauthorized'
+  );
 };
 
 const options = {
@@ -63,8 +76,8 @@ const options = {
       session.id = user?.id;
       return Promise.resolve(session);
     },
-    signIn: signInCallback
-  }
+    signIn: signInCallback,
+  },
 };
 
 // @ts-ignore
