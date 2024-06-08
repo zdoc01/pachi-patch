@@ -60,7 +60,7 @@ const signInCallback = async ({ account, profile }: SignInCallbackArgs) => {
   );
 };
 
-const options = {
+export const authOptions = {
   providers: [
     DiscordProvider({
       // Override to get user guild info for validation of Pachi Patch role
@@ -73,14 +73,16 @@ const options = {
   secret: process.env.SECRET,
   callbacks: {
     session: async (session: Session, user: DefaultUser) => {
-      session.userId = user?.id;
+      console.log('Session callback', session, user);
+
+      if (!session?.user?.id) {
+        session.user.id = user?.id;
+      }
       return Promise.resolve(session);
     },
     signIn: signInCallback,
   },
 };
 
-// @ts-ignore
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
-
-export default authHandler;
+//@ts-ignore
+export default NextAuth(authOptions);

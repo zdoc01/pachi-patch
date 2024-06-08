@@ -1,5 +1,6 @@
 import { NextApiHandler, NextApiRequest } from 'next';
-import { getSession } from 'next-auth/react';
+import { unstable_getServerSession as getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]';
 import prisma from '../../../lib/prisma';
 
 import { GameNight } from '@prisma/client';
@@ -79,7 +80,10 @@ const handler: NextApiHandler = async (req: GameNightRequest, res) => {
     }
   } else if (req.method === 'POST') {
     try {
-      const session = await getSession({ req });
+      // @ts-ignore-next-line
+      const session = await getServerSession(req, res, authOptions);
+
+      console.log('The current getServerSession session', session);
 
       if (!session?.user?.id) {
         throw new Error('Missing current session user ID');
