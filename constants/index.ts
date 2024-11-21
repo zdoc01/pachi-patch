@@ -1,1 +1,1 @@
-export const PLAYERS_PER_GAME = 5;
+export const PLAYERS_PER_GAME = 6;
