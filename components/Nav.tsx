@@ -6,10 +6,9 @@ import { signOut, useSession } from 'next-auth/react';
 
 import Button from './Button';
 
-import styles from '../styles/Nav.module.css';
+import { PACHI_LOGO_URL } from '../constants';
 
-const PACHI_LOGO_URL =
-  'https://cdn.discordapp.com/attachments/616064022390767703/1042691440414818334/IMG_0172.PNG';
+import styles from '../styles/Nav.module.css';
 
 const links = [
   {
@@ -39,7 +38,9 @@ const Account = () => {
     status === 'loading' ? (
       <li>Signing in...</li>
     ) : (
-      <Link href="/api/auth/signin">Login</Link>
+      <li>
+        <Link href="/api/auth/signin">Login</Link>
+      </li>
     );
 
   const HasSession = () => (
@@ -68,6 +69,7 @@ const Nav: React.FC = () => {
               src={PACHI_LOGO_URL}
               width="40"
               height="50"
+              priority
               unoptimized
             />
           </Link>

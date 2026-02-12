@@ -17,7 +17,7 @@
 
 button.button:disabled {
   color: black;
-  background-color: rgba(0,0,0,.5);
+  background-color: rgba(0, 0, 0, 0.5);
   transform: none;
   opacity: 1;
   pointer-events: none;
