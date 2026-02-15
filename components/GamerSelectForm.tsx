@@ -30,14 +30,19 @@ const GamerSelectForm = ({
   selectionType = 'multi',
   users = [],
 }: GamerSelectFormProps) => {
-  const [isLoading, setIsLoading] = useState(true);
   const { users: usersToDisplay, isLoading: isLoadingUsers } = useUsers({
     defaultUsers: users,
     skipFetch: !!users?.length,
   });
-  const [allUsers, setAllUsers] = useState([] as SelectableUser[]);
+  const [allUsers, setAllUsers] = useState(
+    usersToDisplay.map((user) => ({
+      ...user,
+      isSelected: gameSessions?.some((gs) => gs.userId === user.id) || false,
+    })) as SelectableUser[]
+  );
   const { gameSessions, isLoading: isLoadingGameSessions } =
     useGameSessions(gameNightId);
+  const isLoading = isLoadingUsers || isLoadingGameSessions;
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -58,19 +63,6 @@ const GamerSelectForm = ({
     });
     setAllUsers(updatedUsers);
   };
-
-  useEffect(() => {
-    setIsLoading(isLoadingGameSessions || isLoadingUsers);
-  }, [isLoadingGameSessions, isLoadingUsers]);
-
-  useEffect(() => {
-    setAllUsers(
-      usersToDisplay.map((user) => ({
-        ...user,
-        isSelected: gameSessions?.some((gs) => gs.userId === user.id) || false,
-      }))
-    );
-  }, [gameSessions, usersToDisplay]);
 
   /**
    * Only show loading state for initial data load (i.e. isLoading = true).

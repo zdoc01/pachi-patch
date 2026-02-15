@@ -27,7 +27,7 @@ const useGameNights = (opts?: Record<string, any>) => {
     // @see https://swr.vercel.app/docs/conditional-fetching
     useSwr<GameNightsResponse>(GAME_NIGHTS_ENDPOINT, opts);
 
-  const { trigger, isMutating } = useSWRMutation<GameNightsResponse>(
+  const { trigger, isMutating } = useSWRMutation(
     GAME_NIGHTS_ENDPOINT,
     createGameNight,
     {

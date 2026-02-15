@@ -25,6 +25,23 @@ const OVERWATCH_BILLBOARD_IMG_SRC =
 const OVERWATCH_2_MASTHEAD_IMG_SRC =
   'https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltbcf2689c29fa39eb/622906a991f4232f0085d3cc/Masthead_Overwatch2_Logo.png?format=webply&quality=90';
 
+const getInProgressGameNights = (gameNights: GameNight[]) => {
+  const oneDayAgo = +new Date() - 24 * 60 * 60 * 1000;
+  // Anything started within the last day is considered "In Progress"
+  const inProgress = gameNights.filter(
+    (gn) => new Date(gn.createdAt).getTime() > oneDayAgo && !gn.archived
+  );
+  return inProgress;
+};
+
+const getHistoricalGameNights = (gameNights: GameNight[]) => {
+  const inProgress = getInProgressGameNights(gameNights);
+  const historical = gameNights.filter(
+    (gn) => !inProgress.some(({ id }) => id === gn.id)
+  );
+  return historical;
+};
+
 const normalizeHistoricalGameNights = (gameNights: GameNight[]) => {
   const toUpdate: Promise<any>[] = [];
 
@@ -134,12 +151,11 @@ const GameNightHome: NextPage = () => {
   } = useGameNights();
 
   const [isSelectingUsers, setIsSelectingUsers] = useState(false);
-  const [gameNightsInProgress, setGameNightsInProgress] = useState(
-    [] as GameNight[]
-  );
-  const [pastGameNights, setPastGameNights] = useState([] as GameNight[]);
 
   const router = useRouter();
+
+  const gameNightsInProgress = getInProgressGameNights(gameNights || []);
+  const pastGameNights = getHistoricalGameNights(gameNights || []);
 
   const handleGamerSelectSubmit = async (selectedUserIds: User['id'][]) => {
     setIsSelectingUsers(false);
@@ -153,19 +169,8 @@ const GameNightHome: NextPage = () => {
 
   useEffect(() => {
     if (gameNights?.length) {
-      const oneDayAgo = +new Date() - 24 * 60 * 60 * 1000;
-      // Anything started within the last day is considered "In Progress"
-      const inProgress = gameNights.filter(
-        (gn) => new Date(gn.createdAt).getTime() > oneDayAgo && !gn.archived
-      );
-      const historical = gameNights.filter(
-        (gn) => !inProgress.some(({ id }) => id === gn.id)
-      );
-
+      const historical = getHistoricalGameNights(gameNights);
       normalizeHistoricalGameNights(historical);
-
-      setGameNightsInProgress(inProgress);
-      setPastGameNights(historical);
     }
   }, [gameNights]);
 

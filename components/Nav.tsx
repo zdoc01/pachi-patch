@@ -9,6 +9,7 @@ import Button from './Button';
 import { PACHI_LOGO_URL } from '../constants';
 
 import styles from '../styles/Nav.module.css';
+import { DefaultUser } from 'next-auth';
 
 const links = [
   {
@@ -31,33 +32,36 @@ const isActivePath = (pathname: string, href: string) => {
   return href !== '/' && pathname.includes(href);
 };
 
-const Account = () => {
-  const { data: session, status } = useSession();
-
-  const NoSession = () =>
-    status === 'loading' ? (
-      <li>Signing in...</li>
-    ) : (
-      <li>
-        <Link href="/api/auth/signin">Login</Link>
-      </li>
-    );
-
-  const HasSession = () => (
-    <>
-      <li>
-        {session?.user?.name} {`(${session?.user?.email})`}
-      </li>
-      <Button color="primary" label="Logout" onClick={() => signOut()} />
-    </>
+const NoSession = ({ status }: { status: string }) =>
+  status === 'loading' ? (
+    <li>Signing in...</li>
+  ) : (
+    <li>
+      <Link href="/api/auth/signin">Login</Link>
+    </li>
   );
 
-  return session ? <HasSession /> : <NoSession />;
+const HasSession = ({ user }: { user: DefaultUser }) => (
+  <>
+    <li>
+      {user?.name} {`(${user?.email})`}
+    </li>
+    <Button color="primary" label="Logout" onClick={() => signOut()} />
+  </>
+);
+
+const Account = () => {
+  const { data: session, status } = useSession();
+  return session ? (
+    <HasSession user={session.user} />
+  ) : (
+    <NoSession status={status} />
+  );
 };
 
 const Nav: React.FC = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   return (
     <header className={styles.nav}>

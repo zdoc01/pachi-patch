@@ -107,7 +107,7 @@ const GameNight: NextPage = () => {
   const [out, setOut] = useState([] as GameSession[]);
   const [showAddGamerDialog, setShowAddGamerDialog] = useState(false);
   const [showSwapGamersDialog, setShowSwapGamersDialog] = useState(false);
-  const [adjustingRoster, setAdjustingRoster] = useState(false);
+  const [adjustingRoster, setAdjustingRoster] = useState(isMutating);
   const [sessionToSwapOut, setSessionToSwapOut] = useState<GameSession | null>(
     null
   );
@@ -336,12 +336,6 @@ const GameNight: NextPage = () => {
   };
 
   useSessionRedirect();
-
-  useEffect(() => {
-    if (!isMutating && adjustingRoster) {
-      setAdjustingRoster(false);
-    }
-  }, [adjustingRoster, isMutating]);
 
   useEffect(() => {
     const updateSessionState = (sessions: GameSession[]) => {
