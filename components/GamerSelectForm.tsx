@@ -38,12 +38,15 @@ const GamerSelectForm = ({
   const { gameSessions, isLoading: isLoadingGameSessions } =
     useGameSessions(gameNightId);
 
-  const [allUsers, setAllUsers] = useState(
-    usersToDisplay.map((user) => ({
-      ...user,
-      isSelected: gameSessions?.some((gs) => gs.userId === user.id) || false,
-    })) as SelectableUser[]
-  );
+  const [formUsers, setFormUsers] = useState([] as SelectableUser[]);
+
+  const usersToRender = formUsers.length
+    ? formUsers
+    : (usersToDisplay as SelectableUser[]);
+  const selectableUsers: SelectableUser[] = usersToRender.map((user) => ({
+    ...user,
+    isSelected: gameSessions?.some((gs) => gs.userId === user.id) || false,
+  }));
 
   const isLoading = isLoadingUsers || isLoadingGameSessions;
 
@@ -58,13 +61,13 @@ const GamerSelectForm = ({
     // Must update in this way (full reset of `allUsers`) to force full checkbox
     // re-render, otherwise checkbox state doesn't reflect user selected
     // state.
-    const updatedUsers = allUsers.map((u) => {
+    const updatedUsers = usersToRender.map((u) => {
       if (u.id !== user.id) {
         return u;
       }
       return { ...u, isSelected: !u.isSelected };
     });
-    setAllUsers(updatedUsers);
+    setFormUsers(updatedUsers);
   };
 
   /**
@@ -79,7 +82,7 @@ const GamerSelectForm = ({
   ) : (
     <form className={styles['gamer-select-form']} onSubmit={handleSubmit}>
       <div className={`flex-grid ${styles.gamers}`}>
-        {allUsers.map((user, idx) => {
+        {selectableUsers.map((user, idx) => {
           return (
             <label className={styles['selectable-gamer-card']} key={user.id}>
               <input
