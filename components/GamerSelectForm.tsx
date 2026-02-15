@@ -34,14 +34,17 @@ const GamerSelectForm = ({
     defaultUsers: users,
     skipFetch: !!users?.length,
   });
+
+  const { gameSessions, isLoading: isLoadingGameSessions } =
+    useGameSessions(gameNightId);
+
   const [allUsers, setAllUsers] = useState(
     usersToDisplay.map((user) => ({
       ...user,
       isSelected: gameSessions?.some((gs) => gs.userId === user.id) || false,
     })) as SelectableUser[]
   );
-  const { gameSessions, isLoading: isLoadingGameSessions } =
-    useGameSessions(gameNightId);
+
   const isLoading = isLoadingUsers || isLoadingGameSessions;
 
   const handleSubmit = (event: FormEvent) => {
