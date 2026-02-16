@@ -14,6 +14,8 @@ import { Modal } from '../../components/Modal';
 
 import useSessionRedirect from '../../hooks/use-session-redirect';
 import { useGameNights } from '../../hooks/use-game-nights';
+import { useGameSessions } from '../../hooks/use-game-sessions';
+import { useUsers } from '../../hooks/use-users';
 
 import { IconCog } from '../../src/icons/IconCog';
 import { getFormattedDate, timeSince } from '../../src/utils/dates';
@@ -152,7 +154,7 @@ const GameNightHome: NextPage = () => {
 
   const [isSelectingUsers, setIsSelectingUsers] = useState(false);
 
-  const router = useRouter();
+  const { users, isLoading: isLoadingUsers } = useUsers();
 
   const gameNightsInProgress = getInProgressGameNights(gameNights || []);
   const pastGameNights = getHistoricalGameNights(gameNights || []);
@@ -204,7 +206,15 @@ const GameNightHome: NextPage = () => {
             onClose={() => setIsSelectingUsers(false)}
             title="Who's playing tonight?"
           >
-            <GamerSelectForm onSubmit={handleGamerSelectSubmit} />
+            {isLoadingUsers ? (
+              <div>Loading...</div>
+            ) : (
+              <GamerSelectForm
+                key={users?.length || 'loading'}
+                onSubmit={handleGamerSelectSubmit}
+                users={users}
+              />
+            )}
           </Modal>
         )}
       </div>

@@ -94,10 +94,19 @@ const EmptySectionMessage = ({ sectionName }: EmptySectionMessageProps) => (
 
 const GameNight: NextPage = () => {
   const router = useRouter();
+  const gameNightId = Array.isArray(router?.query?.id)
+    ? router.query.id[0]
+    : router?.query?.id;
+
   const { getUserById, users } = useUsers();
-  const { mutateGameSessionsBatch, isMutating } = useGameSessions();
+  const {
+    gameSessions,
+    mutateGameSessionsBatch,
+    isMutating,
+    isLoading: isLoadingGameSessions,
+  } = useGameSessions(gameNightId);
   const { gameNight, error, isLoading, mutateGameNight } = useGameNight(
-    router?.query?.id,
+    gameNightId,
     {
       refreshInterval: isMutating ? 0 : 10000,
     }
@@ -525,8 +534,13 @@ const GameNight: NextPage = () => {
               title="Add / Remove Gamers"
             >
               <GamerSelectForm
+                key={gameSessions?.length || 'loading'}
+                initialSelectedUserIds={
+                  gameSessions?.map(({ userId }) => userId) || []
+                }
                 gameNightId={gameNight?.id}
                 onSubmit={handleGamerSelectSubmit}
+                users={users}
               />
             </Modal>
           )}
@@ -536,6 +550,7 @@ const GameNight: NextPage = () => {
               title={`Who are we swapping for ${sessionToSwapOut.user.name}?`}
             >
               <GamerSelectForm
+                key={out?.length || 'loading'}
                 selectionType="single"
                 users={out.map(({ user }) => user)}
                 onSubmit={handleGamerSwapSubmit}
