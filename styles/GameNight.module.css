@@ -13,12 +13,10 @@
 }
 
 .gamenight .status {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: flex-start;
   column-gap: 20px;
-}
-
-.gamenight .column {
-  flex: 1 auto;
 }
 
 .gamenight .status .card {

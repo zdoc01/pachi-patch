@@ -478,7 +478,7 @@ const GameNight: NextPage = () => {
               onClick={handleAddGamerClick}
             />
           </section>
-          <section className={`flex-grid ${styles.status}`}>
+          <section className={`${styles.status}`}>
             <div className={styles.column}>
               <h2>In</h2>
               {playing.length > 0 ? (
