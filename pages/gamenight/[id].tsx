@@ -99,12 +99,7 @@ const GameNight: NextPage = () => {
     : router?.query?.id;
 
   const { getUserById, users } = useUsers();
-  const {
-    gameSessions,
-    mutateGameSessionsBatch,
-    isMutating,
-    isLoading: isLoadingGameSessions,
-  } = useGameSessions(gameNightId);
+  const { mutateGameSessionsBatch, isMutating } = useGameSessions(gameNightId);
   const { gameNight, error, isLoading, mutateGameNight } = useGameNight(
     gameNightId,
     {
@@ -271,6 +266,8 @@ const GameNight: NextPage = () => {
         },
         { revalidate: false }
       );
+
+      setAdjustingRoster(false);
     }
   };
 
@@ -534,9 +531,9 @@ const GameNight: NextPage = () => {
               title="Add / Remove Gamers"
             >
               <GamerSelectForm
-                key={gameSessions?.length || 'loading'}
+                key={gameNight?.gameSessions?.length || 'loading'}
                 initialSelectedUserIds={
-                  gameSessions?.map(({ userId }) => userId) || []
+                  gameNight?.gameSessions?.map(({ userId }) => userId) || []
                 }
                 gameNightId={gameNight?.id}
                 onSubmit={handleGamerSelectSubmit}
