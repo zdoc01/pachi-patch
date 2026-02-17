@@ -43,7 +43,7 @@ const NoSession = ({ status }: { status: string }) =>
 
 const HasSession = ({ user }: { user: DefaultUser }) => (
   <>
-    <li className={styles.username}>
+    <li>
       {user?.name} {`(${user?.email})`}
     </li>
     <Button color="primary" label="Logout" onClick={() => signOut()} />
