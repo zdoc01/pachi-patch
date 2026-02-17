@@ -1,7 +1,7 @@
 .nav {
   min-height: var(--min-header-height);
   margin: 0 -2rem;
-  padding: 1rem 2rem;
+  padding: 0 2rem;
   color: white;
   background-color: var(--color-secondary);
   display: flex;
@@ -26,14 +26,14 @@
   padding: 10px;
 }
 
-.active::after {
-  content: '';
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 100%;
-  border-top: 5px solid var(--color-primary);
+.nav ul li.active {
+  background-color: var(--color-primary);
+  border-radius: 5px;
+}
+
+.nav ul li:not(.active, .branding):hover {
+  background-color: black;
+  border-radius: 5px;
 }
 
 .right li:not(:last-child) {
@@ -42,5 +42,5 @@
 
 .branding {
   cursor: pointer;
-  margin-right: 1rem;
+  margin-right: 2rem;
 }

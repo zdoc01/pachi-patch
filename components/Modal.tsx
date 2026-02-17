@@ -1,9 +1,8 @@
-import { useRef, MouseEvent, useEffect } from 'react';
+import { useRef, MouseEvent, useEffect, PropsWithChildren } from 'react';
 
 import styles from '../styles/Modal.module.css';
 
-interface ModalProps {
-  children: JSX.Element | JSX.Element[];
+interface ModalProps extends PropsWithChildren {
   onClose: () => void;
   title: string;
 }

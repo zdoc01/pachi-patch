@@ -21,10 +21,7 @@ const updateGameSessions = async (
   }).then((res) => res.json());
 };
 
-const useGameSessions = (
-  gameNightId?: GameNight['id'],
-  opts?: Record<string, any>
-) => {
+const useGameSessions = (gameNightId?: string, opts?: Record<string, any>) => {
   const {
     data,
     error,

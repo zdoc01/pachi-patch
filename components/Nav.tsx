@@ -6,10 +6,10 @@ import { signOut, useSession } from 'next-auth/react';
 
 import Button from './Button';
 
-import styles from '../styles/Nav.module.css';
+import { PACHI_LOGO_URL } from '../constants';
 
-const PACHI_LOGO_URL =
-  'https://cdn.discordapp.com/attachments/616064022390767703/1042691440414818334/IMG_0172.PNG';
+import styles from '../styles/Nav.module.css';
+import { DefaultUser } from 'next-auth';
 
 const links = [
   {
@@ -32,31 +32,36 @@ const isActivePath = (pathname: string, href: string) => {
   return href !== '/' && pathname.includes(href);
 };
 
-const Account = () => {
-  const { data: session, status } = useSession();
-
-  const NoSession = () =>
-    status === 'loading' ? (
-      <li>Signing in...</li>
-    ) : (
+const NoSession = ({ status }: { status: string }) =>
+  status === 'loading' ? (
+    <li>Signing in...</li>
+  ) : (
+    <li>
       <Link href="/api/auth/signin">Login</Link>
-    );
-
-  const HasSession = () => (
-    <>
-      <li>
-        {session?.user?.name} {`(${session?.user?.email})`}
-      </li>
-      <Button color="primary" label="Logout" onClick={() => signOut()} />
-    </>
+    </li>
   );
 
-  return session ? <HasSession /> : <NoSession />;
+const HasSession = ({ user }: { user: DefaultUser }) => (
+  <>
+    <li>
+      {user?.name} {`(${user?.email})`}
+    </li>
+    <Button color="primary" label="Logout" onClick={() => signOut()} />
+  </>
+);
+
+const Account = () => {
+  const { data: session, status } = useSession();
+  return session ? (
+    <HasSession user={session.user} />
+  ) : (
+    <NoSession status={status} />
+  );
 };
 
 const Nav: React.FC = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   return (
     <header className={styles.nav}>
@@ -68,6 +73,7 @@ const Nav: React.FC = () => {
               src={PACHI_LOGO_URL}
               width="40"
               height="50"
+              priority
               unoptimized
             />
           </Link>

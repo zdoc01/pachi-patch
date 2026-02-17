@@ -7,10 +7,9 @@ import { useRouter } from 'next/router';
 import AuthorizedView from '../components/AuthorizedView';
 import Button from '../components/Button';
 
-import styles from '../styles/Home.module.css';
+import { PACHI_LOGO_URL } from '../constants';
 
-const PACHI_LOGO_URL =
-  'https://cdn.discordapp.com/attachments/616064022390767703/1042691440414818334/IMG_0172.PNG';
+import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -55,6 +54,7 @@ const Home: NextPage = () => {
           src={PACHI_LOGO_URL}
           width="350"
           height="450"
+          priority
           unoptimized
         />
       </section>

@@ -94,10 +94,14 @@ const EmptySectionMessage = ({ sectionName }: EmptySectionMessageProps) => (
 
 const GameNight: NextPage = () => {
   const router = useRouter();
+  const gameNightId = Array.isArray(router?.query?.id)
+    ? router.query.id[0]
+    : router?.query?.id;
+
   const { getUserById, users } = useUsers();
-  const { mutateGameSessionsBatch, isMutating } = useGameSessions();
+  const { mutateGameSessionsBatch, isMutating } = useGameSessions(gameNightId);
   const { gameNight, error, isLoading, mutateGameNight } = useGameNight(
-    router?.query?.id,
+    gameNightId,
     {
       refreshInterval: isMutating ? 0 : 10000,
     }
@@ -107,7 +111,7 @@ const GameNight: NextPage = () => {
   const [out, setOut] = useState([] as GameSession[]);
   const [showAddGamerDialog, setShowAddGamerDialog] = useState(false);
   const [showSwapGamersDialog, setShowSwapGamersDialog] = useState(false);
-  const [adjustingRoster, setAdjustingRoster] = useState(false);
+  const [adjustingRoster, setAdjustingRoster] = useState(isMutating);
   const [sessionToSwapOut, setSessionToSwapOut] = useState<GameSession | null>(
     null
   );
@@ -197,6 +201,8 @@ const GameNight: NextPage = () => {
         );
       }
     }
+
+    setAdjustingRoster(false);
   };
 
   const handleGamerSelectSubmit = (selectedUserIds: User['id'][]) => {
@@ -262,6 +268,8 @@ const GameNight: NextPage = () => {
         },
         { revalidate: false }
       );
+
+      setAdjustingRoster(false);
     }
   };
 
@@ -336,12 +344,6 @@ const GameNight: NextPage = () => {
   };
 
   useSessionRedirect();
-
-  useEffect(() => {
-    if (!isMutating && adjustingRoster) {
-      setAdjustingRoster(false);
-    }
-  }, [adjustingRoster, isMutating]);
 
   useEffect(() => {
     const updateSessionState = (sessions: GameSession[]) => {
@@ -478,7 +480,7 @@ const GameNight: NextPage = () => {
               onClick={handleAddGamerClick}
             />
           </section>
-          <section className={`flex-grid ${styles.status}`}>
+          <section className={`${styles.status}`}>
             <div className={styles.column}>
               <h2>In</h2>
               {playing.length > 0 ? (
@@ -531,8 +533,13 @@ const GameNight: NextPage = () => {
               title="Add / Remove Gamers"
             >
               <GamerSelectForm
+                key={gameNight?.gameSessions?.length || 'loading'}
+                initialSelectedUserIds={
+                  gameNight?.gameSessions?.map(({ userId }) => userId) || []
+                }
                 gameNightId={gameNight?.id}
                 onSubmit={handleGamerSelectSubmit}
+                users={users}
               />
             </Modal>
           )}
@@ -542,6 +549,7 @@ const GameNight: NextPage = () => {
               title={`Who are we swapping for ${sessionToSwapOut.user.name}?`}
             >
               <GamerSelectForm
+                key={out?.length || 'loading'}
                 selectionType="single"
                 users={out.map(({ user }) => user)}
                 onSubmit={handleGamerSwapSubmit}
