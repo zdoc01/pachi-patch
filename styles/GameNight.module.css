@@ -30,6 +30,7 @@
 @media (max-width: 600px) {
   .gamenight {
     margin: 0;
+    grid-template-columns: 1fr;
   }
   .gamenight .status .column:not(:last-child) {
     margin-right: 0;
