@@ -201,6 +201,8 @@ const GameNight: NextPage = () => {
         );
       }
     }
+
+    setAdjustingRoster(false);
   };
 
   const handleGamerSelectSubmit = (selectedUserIds: User['id'][]) => {
