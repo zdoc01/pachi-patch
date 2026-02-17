@@ -24,8 +24,8 @@ import styles from '../../styles/GameNightHome.module.css';
 
 const OVERWATCH_BILLBOARD_IMG_SRC =
   'https://images.blz-contentstack.com/v3/assets/blt2477dcaf4ebd440c/bltdad361c29b29b03a/5cef227acf7aa6330ac66561/eichenwalde-screenshot-003.jpg?auto=webp';
-const OVERWATCH_2_MASTHEAD_IMG_SRC =
-  'https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltbcf2689c29fa39eb/622906a991f4232f0085d3cc/Masthead_Overwatch2_Logo.png?format=webply&quality=90';
+const OVERWATCH_MASTHEAD_IMG_SRC =
+  'https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt12c582d9d58631b9/697c1e3f3101f35f4e5611b1/Group.png';
 
 const getInProgressGameNights = (gameNights: GameNight[]) => {
   const oneDayAgo = +new Date() - 24 * 60 * 60 * 1000;
@@ -81,8 +81,8 @@ const InProgress = ({ gameNight }: { gameNight: GameNight }) => {
         />
         <div className={styles.masthead}>
           <Image
-            alt="Overwatch 2"
-            src={OVERWATCH_2_MASTHEAD_IMG_SRC}
+            alt="Overwatch"
+            src={OVERWATCH_MASTHEAD_IMG_SRC}
             width="480"
             height="50"
             unoptimized
